@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>    
+    <meta charset="UTF-8">
+    <title>Türkçe Sözlük</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      function get_suggestions(input) {
+	  return $.get("http://sozlukproxy.canaknesil.com/query",
+		       {"func": "oneri", "soz": input});
+      }
+
+      function make_query(input) {
+	  // TODO: Make query to multiple dictionaries.
+	  // Return result in a dictionary.
+	  // Fetch available dictionaries from proxy.
+	  // Proxy should have same interface to all dictionaries.
+
+	  // For not only returning gts.
+	  return [{dict_name: "Güzel Türkçe Sözlük",
+		   result: $.get("http://sozlukproxy.canaknesil.com/query",
+				 {"func": "gts", "ara": input})}];
+      }
+
+      function display_search_results(data) {
+	  // TODO: construct html
+	  data.forEach(function(dict_result) {
+	      console.log(dict_result.dict_name);
+	      dict_result.result.done(function(query_result) {
+		  console.log(query_result);
+		  if (query_result.error) {
+	       	      console.log("Sonuç bulunamadı.");
+		  } else {
+		      for (let i=0; i<query_result.length; i++) {
+			  console.log("Definition " + (i + 1));
+			  definition = query_result[i];
+			  for (let j=0; j<definition.anlamlarListe.length; j++) {
+			      console.log("Sense " + (j + 1));
+			      sense = definition.anlamlarListe[j];
+			      console.log(sense.anlam);
+			  }
+		      }
+		  }
+	      });
+	  });
+      }
+      
+      $(function() {
+	  const urlParams = new URLSearchParams(window.location.search);
+	  search_input = urlParams.get("search_input");
+	  if (search_input == "")
+	      search_input = null;
+	  
+	  if (search_input) {
+	      $('#search_input').val(search_input);
+	      $('#search_input').select();
+	      
+	      display_search_results(make_query(search_input));
+	  }
+      });
+    </script>
+  </head>
+  <body>
+    
+    <form autocomplete="off">
+      <input id="search_input" type="text" name="search_input"
+	     placeholder="Aranacak ifadeyi giriniz" required>
+      <input type="submit" value="Ara">
+    </form>
+    
+  </body>
+</html> 
