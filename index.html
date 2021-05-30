@@ -4,12 +4,91 @@
     <meta charset="UTF-8">
     <title>Türkçe Sözlük</title>
 
+    <link href='https://fonts.googleapis.com/css?family=Kaushan Script' rel='stylesheet'>
+    
     <style>
+      body {
+	  background-color: #bbaa99;
+	  font-family: Verdana, sans-serif;
+	  font-size: 120%;
+      }
+
+      #title {
+	  background-color: #e0e080
+      }
+
+      #title > h1 {
+	  margin: 0px;
+	  font-family: 'Kaushan Script';
+	  font-size: 200%;
+	  text-align: center;
+      }
+
+      #content {
+	  max-width: 800px;
+	  margin: auto;
+      }
+      
+      .box {
+	  margin: 10px;
+	  padding: 20px;
+	  border: 1px solid;
+	  box-shadow: 5px 5px 10px 0 #202020;
+	  border-color: #c0c0c0;
+	  border-radius: 4px;
+	  background-color: #eeffee;
+      }
+
+      #searchbox {
+	  background-color: #88cc44;
+      }
+
+      #search_form {
+	  display: flex;
+      }
+
+      #search_input, #search_button {
+	  font-size: 100%;
+	  padding: 10px;
+	  margin: 2px;
+	  border: 0px;
+      }
+
+      #search_input {
+	  flex-grow: 1;
+      }
+      
+      #search_button {
+	  background-color: #228822;
+	  color: white;
+      }
+
+      .dict_result > h3 {
+	  margin-top: 5px;
+	  margin-bottom: 5px;
+	  font-family: 'Kaushan Script';
+	  text-align: center;
+      }
+
+      .definition > h4 {
+	  font-size: 130%;
+	  margin-top: 20px;
+	  margin-bottom: 20px;
+	  font-weight: normal;
+      }
+
+      .definition > ol {
+	  padding-left: 0px;
+	  list-style-position: inside;
+      }
+      
       .loader {
 	  border: 6px solid #e0e0e0;
 	  border-radius: 50%;
-	  border-top: 6px solid #3498db;
-	  border-bottom: 6px solid #3498db;
+	  border-top: 6px solid #ffff00;
+	  border-bottom: 6px solid #ff0000;
+	  border-right: 6px solid #00ff00;
+	  border-left: 6px solid #0000ff;
 	  width: 30px;
 	  height: 30px;
 	  margin: 8px;
@@ -91,7 +170,7 @@
 		  if (query_result.error) {
 		      
 		  } else {
-		      dict_el = $('<div class="dict_result">').appendTo('#results');
+		      dict_el = $('<div class="dict_result box">').appendTo('#results');
 		      $('<h3>', {html: dict_result.dict_name}).appendTo(dict_el);
 
 		      query_result = sort_by_key(query_result, 'kac');		      
@@ -141,7 +220,7 @@
 	  display_search_results(results, resolve_cb=function() {
 	      $('#results_loader').hide();
 	      if ($('#results').children('.dict_result').length == 0) {
-		  $('<p>Sonuç bulunamadı.</p>').appendTo('#results');
+		  $('<div class="box"><p>Sonuç bulunamadı.</p></div>').appendTo('#results');
 	      }
 	  });
       }
@@ -162,15 +241,23 @@
     </script>
   </head>
   <body>
-    
-    <form autocomplete="off">
-      <input id="search_input" type="text" name="search_input"
-	     placeholder="Aranacak ifadeyi giriniz" required>
-      <input type="submit" value="Ara">
-    </form>
 
-    <div id="results"></div>
-    <div id="results_loader" class="loader" hidden></div>
+    <div id="content">
+      <div id="title" class="box">
+	<h1>Türkçe Sözlük</h1>
+      </div>
+
+      <div id="searchbox" class="box">
+	<form autocomplete="off" id="search_form">
+	  <input id="search_input" type="text" name="search_input"
+		 placeholder="Aranacak ifadeyi giriniz" required>
+	  <input id="search_button" type="submit" value="Ara">
+	</form>
+      </div>
+    
+      <div id="results"></div>
+      <div id="results_loader" class="loader" hidden></div>
+    </div>
     
   </body>
 </html> 
