@@ -3,6 +3,32 @@
   <head>    
     <meta charset="UTF-8">
     <title>Türkçe Sözlük</title>
+
+    <style>
+      .loader {
+	  border: 6px solid #e0e0e0;
+	  border-radius: 50%;
+	  border-top: 6px solid #3498db;
+	  border-bottom: 6px solid #3498db;
+	  width: 30px;
+	  height: 30px;
+	  margin: 8px;
+	  -webkit-animation: spin 1.2s linear infinite; /* Safari */
+	  animation: spin 1.2s linear infinite;
+      }
+      
+      /* Safari */
+      @-webkit-keyframes spin {
+	  0% { -webkit-transform: rotate(0deg); }
+	  100% { -webkit-transform: rotate(360deg); }
+      }
+      
+      @keyframes spin {
+	  0% { transform: rotate(0deg); }
+	  100% { transform: rotate(360deg); }
+      }
+    </style>
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
       
@@ -58,10 +84,8 @@
 
       }
 
-      function display_search_results(data) {
-	  // TODO: Modify proxy to simplify data structure.
-	  // Properties lists are very difficult to understand.
-	  data.forEach(function(dict_result) {
+      function display_search_results(data, resolve_cb) {
+	  data.forEach(function(dict_result, idx, data) {
 	      dict_result.result.done(function(query_result) {
 		  console.log(query_result);
 		  if (query_result.error) {
@@ -89,22 +113,36 @@
 			  for (let j=0; j<senses.length; j++) {
 			      sense = senses[j];
 			      li_el = $('<li>').appendTo(olist_el);
-			      
-			      properties = {};
-			      if (sense.ozelliklerListe) {
-				  sense.ozelliklerListe.forEach(function (prop) {
-				      properties[prop.tur] = prop.tam_adi;
-				  });
-			      }
-			      console.log(properties);
 
-			      // if (sense_type)
-			      // 	  $('<i>', {html: sense_type + " "}).appendTo(li_el);
+			      sense_types = sense.ozelliklerListe
+				  .filter(function(p) { return p.tur == "3"; })
+				  .map(function(p) { return p.tam_adi; })
+			      
+			      sense_type_str = "";
+			      if (sense_types.length > 0)
+				  sense_type_str += sense_types[0];
+			      sense_types.slice(1).forEach(function(t) { sense_type_str += ", " + t; });
+			      //console.log(sense_type_str);
+			      $('<i>', {html: sense_type_str + " "}).appendTo(li_el);
+			      
 			      li_el.append(sense.anlam);
 			  }
 		      }
 		  }
+		  if (idx == data.length - 1) // Call resolve_cb at the end of last iteration.
+		      resolve_cb();
 	      });
+	  });
+      }
+
+      function make_query_and_display_results(search_input) {
+	  $('#results_loader').show();
+	  results = make_query(search_input);
+	  display_search_results(results, resolve_cb=function() {
+	      $('#results_loader').hide();
+	      if ($('#results').children('.dict_result').length == 0) {
+		  $('<p>Sonuç bulunamadı.</p>').appendTo('#results');
+	      }
 	  });
       }
       
@@ -118,7 +156,7 @@
 	      $('#search_input').val(search_input);
 	      $('#search_input').select();
 	      
-	      display_search_results(make_query(search_input));
+	      make_query_and_display_results(search_input);
 	  }
       });
     </script>
@@ -132,6 +170,7 @@
     </form>
 
     <div id="results"></div>
+    <div id="results_loader" class="loader" hidden></div>
     
   </body>
 </html> 
