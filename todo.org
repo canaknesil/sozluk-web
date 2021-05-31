@@ -1,0 +1,18 @@
+
+* Öneriler
+  Yaşil arama kutusunun içinde, yazılan yerin altında sarı, kenarları
+  daire olan arka plan içinde düğmeler. div içinde spanler.
+
+
+* Lisan (hangi dilden gelme)
+* Özel isim mi? Örnek: İstanbul
+* Ön takı. Örnek: (birinin) ağzına bakakalmak
+* Çoğul mu? Örnek: koordinatlar
+* Telaffuz. Örnel: gönülsüzce (gönülsü'zce)
+* -i -e lerin yaninda fiil
+* Diğer özellikler (argo ...)
+
+  
+* Örnekler
+* Bileşikler
+* Atasözleri ve deyimler

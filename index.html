@@ -159,17 +159,15 @@
       }
 
       // DISPLAY
-      function display_search_error(msg) {
-
+      function display_search_error() {
+	  $('<div class="box"><p>Sonuç bulunamadı.</p></div>').appendTo('#results');
       }
 
       function display_search_results(data, resolve_cb) {
 	  data.forEach(function(dict_result, idx, data) {
 	      dict_result.result.done(function(query_result) {
 		  console.log(query_result);
-		  if (query_result.error) {
-		      
-		  } else {
+		  if (!query_result.error) {
 		      dict_el = $('<div class="dict_result box">').appendTo('#results');
 		      $('<h3>', {html: dict_result.dict_name}).appendTo(dict_el);
 
@@ -220,7 +218,7 @@
 	  display_search_results(results, resolve_cb=function() {
 	      $('#results_loader').hide();
 	      if ($('#results').children('.dict_result').length == 0) {
-		  $('<div class="box"><p>Sonuç bulunamadı.</p></div>').appendTo('#results');
+		  display_search_error();
 	      }
 	  });
       }
