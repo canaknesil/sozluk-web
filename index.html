@@ -38,6 +38,24 @@
 	  height: 6rem; /* must be more than footer height */
       }
 
+      #suggestions {
+	  line-height: 1.9em;
+	  margin-bottom: 0;
+	  margin-top: 0.5em;
+      }
+	  
+      .suggestion {
+	  background-color: #e0e080;
+	  border-radius: 1em;
+	  padding: 0.2em 0.6em;
+	  margin: 0em;
+      }
+
+      .suggestion a {
+	  color: inherit;
+	  text-decoration: inherit;
+      }
+
       #title {
 	  background-color: #e0e080;
 	  top: 20px;
@@ -193,12 +211,28 @@
 				 {"func": "gts", "ara": input})}];
       }
 
+      function get_suggestions(input) {
+	  return $.get("https://sozlukproxy.canaknesil.com/query",
+		       {"func": "oneri", "soz": input})
+      }
+
       // DISPLAY
       function display_search_error() {
 	  $('<div class="box"><p>Sonuç bulunamadı.</p></div>').appendTo('#results');
       }
 
-      function display_search_results(data, resolve_cb) {
+      function display_search_results(data, suggestions, resolve_cb) {
+	  suggestions.done(function(suggestions_list) {
+	      suggestions_list.forEach(function(suggestion) {
+		  suggestion = suggestion.madde;
+		  $('<span class="suggestion">')
+		      .append($('<a>', {html: suggestion,
+					href: "index.html?search_input=" + suggestion}))
+		      .appendTo('#suggestions');
+		  $('#suggestions').append(" ");
+		  
+	      });
+	  });
 	  data.forEach(function(dict_result, idx, data) {
 	      dict_result.result.done(function(query_result) {
 		  console.log(query_result);
@@ -250,7 +284,8 @@
       function make_query_and_display_results(search_input) {
 	  $('#results_loader').show();
 	  results = make_query(search_input);
-	  display_search_results(results, resolve_cb=function() {
+	  suggestions = get_suggestions(search_input);
+	  display_search_results(results, suggestions, resolve_cb=function() {
 	      $('#results_loader').hide();
 	      if ($('#results').children('.dict_result').length == 0) {
 		  display_search_error();
@@ -289,6 +324,7 @@
 		   placeholder="Aranacak ifadeyi giriniz" required>
 	    <input id="search_button" type="submit" value="Ara">
 	  </form>
+	  <p id="suggestions"></p>
 	</div>
 	
 	<div id="results"></div>
